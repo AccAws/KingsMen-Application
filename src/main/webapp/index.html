@@ -1,231 +1,536 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AccAws · Cloud Dashboard</title>
+    <!-- Google Font & simple icon set (Feather) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        /* ---------- RESET & GLOBAL ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <title>AccAws Cloud Dashboard</title>
+        body {
+            background: #0b0f1a;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #e8edf5;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+        }
 
-    <link rel="stylesheet" href="style.css">
+        /* soft gradient glow */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at 20% 10%, rgba(0, 180, 255, 0.08), transparent 45%),
+                        radial-gradient(circle at 90% 80%, rgba(138, 43, 226, 0.08), transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ---------- LAYOUT WRAPPERS ---------- */
+        .topbar,
+        .container,
+        footer {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* ---------- HEADER / TOPBAR ---------- */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(18, 24, 38, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 2rem;
+            padding: 0.9rem 1.8rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.6);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 2.8rem;
+            height: 2.8rem;
+            background: linear-gradient(145deg, #0066ff, #2b8aff);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #fff;
+            box-shadow: 0 8px 18px -6px #0066ff70;
+            letter-spacing: -0.5px;
+        }
+
+        .brand h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to right, #ffffff, #b0c8ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand span {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #8e9db5;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            display: block;
+            margin-top: 0.1rem;
+        }
+
+        .version {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            padding: 0.4rem 1.2rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #b7c9e2;
+            letter-spacing: 0.02em;
+        }
+
+        /* ---------- MAIN CONTAINER ---------- */
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            flex: 1;
+        }
+
+        /* ---------- HERO ---------- */
+        .hero {
+            background: rgba(16, 22, 35, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 2rem;
+            padding: 2.5rem 2.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            box-shadow: 0 20px 35px -15px rgba(0, 0, 0, 0.7);
+        }
+
+        .eyebrow {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            color: #4299ff;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #fff 0%, #b8d0ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.6rem;
+        }
+
+        .subtitle {
+            color: #99aec9;
+            max-width: 550px;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        .hero button {
+            background: linear-gradient(145deg, #1e6eff, #0f5ae0);
+            border: none;
+            padding: 0.9rem 2.2rem;
+            border-radius: 3rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 12px 22px -8px #1e6eff90;
+            transition: all 0.25s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.01em;
+            white-space: nowrap;
+        }
+
+        .hero button:hover {
+            background: linear-gradient(145deg, #3280ff, #1a62f0);
+            box-shadow: 0 16px 28px -8px #1e6effcc;
+            transform: translateY(-2px);
+        }
+
+        .hero button:active {
+            transform: translateY(1px);
+            box-shadow: 0 8px 16px -6px #1e6eff;
+        }
+
+        /* ---------- CARDS ---------- */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: rgba(18, 26, 42, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1.8rem;
+            padding: 1.8rem 1.8rem 1.6rem;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.2s ease;
+            box-shadow: 0 15px 30px -15px #00000080;
+        }
+
+        .card:hover {
+            border-color: rgba(66, 153, 255, 0.3);
+            background: rgba(22, 32, 50, 0.8);
+            transform: translateY(-3px);
+            box-shadow: 0 25px 35px -15px #000000cc;
+        }
+
+        .icon {
+            font-size: 2rem;
+            line-height: 1;
+            margin-bottom: 1.2rem;
+            opacity: 0.9;
+            filter: drop-shadow(0 0 8px #2b7aff60);
+        }
+
+        .card h3 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #9db1cf;
+            margin-bottom: 0.5rem;
+        }
+
+        .card strong {
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to bottom, #fff, #c0d4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+            margin-bottom: 0.25rem;
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            color: #8b9fbb;
+            font-weight: 400;
+        }
+
+        /* ---------- ACTIVITY SECTION ---------- */
+        .activity {
+            background: rgba(14, 20, 32, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 2rem;
+            padding: 2rem 2.2rem;
+            box-shadow: 0 18px 30px -15px #000000;
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.8rem;
+        }
+
+        .section-title h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: #e2ecff;
+        }
+
+        .section-title span {
+            font-size: 0.8rem;
+            color: #7b8dab;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.3rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .activity-row {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            padding: 0.9rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .activity-row:last-child {
+            border-bottom: none;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: #1e7eff;
+            border-radius: 50%;
+            box-shadow: 0 0 12px 2px #1e7eff90;
+            flex-shrink: 0;
+        }
+
+        .activity-row > div:nth-child(2) {
+            flex: 1;
+        }
+
+        .activity-row b {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #eef5ff;
+            display: block;
+            margin-bottom: 0.15rem;
+            letter-spacing: -0.01em;
+        }
+
+        .activity-row p {
+            font-size: 0.85rem;
+            color: #8da0bf;
+            font-weight: 400;
+        }
+
+        .activity-row time {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #7e92b0;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.3rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            white-space: nowrap;
+        }
+
+        /* ---------- FOOTER ---------- */
+        footer {
+            text-align: center;
+            padding: 2.5rem 0 1rem;
+            font-size: 0.85rem;
+            color: #6e82a0;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            margin-top: 2rem;
+            letter-spacing: 0.01em;
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 700px) {
+            body {
+                padding: 1rem;
+            }
+
+            .topbar {
+                padding: 0.7rem 1.2rem;
+                border-radius: 1.5rem;
+            }
+
+            .logo {
+                width: 2.3rem;
+                height: 2.3rem;
+                font-size: 1.2rem;
+            }
+
+            .brand h1 {
+                font-size: 1.1rem;
+            }
+
+            .version {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.9rem;
+            }
+
+            .hero {
+                padding: 1.8rem 1.5rem;
+                border-radius: 1.5rem;
+            }
+
+            .hero h2 {
+                font-size: 1.6rem;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+            }
+
+            .hero button {
+                padding: 0.7rem 1.6rem;
+                font-size: 0.85rem;
+                width: 100%;
+                text-align: center;
+            }
+
+            .cards {
+                gap: 1rem;
+            }
+
+            .card {
+                padding: 1.4rem;
+                border-radius: 1.5rem;
+            }
+
+            .card strong {
+                font-size: 2rem;
+            }
+
+            .activity {
+                padding: 1.5rem;
+                border-radius: 1.5rem;
+            }
+
+            .activity-row {
+                flex-wrap: wrap;
+                gap: 0.6rem;
+            }
+
+            .activity-row time {
+                margin-left: auto;
+            }
+
+            .section-title h3 {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
 </head>
-
 <body>
-
     <!-- Header -->
     <header class="topbar">
-
         <div class="brand">
-
-            <div class="logo">
-                A
-            </div>
-
+            <div class="logo">A</div>
             <div>
                 <h1>AccAws</h1>
                 <span>Cloud Operations</span>
             </div>
-
         </div>
-
-        <div class="version">
-            Release v2.3.0
-        </div>
-
+        <div class="version">Release v2.3.0</div>
     </header>
-
 
     <!-- Main Content -->
     <main class="container">
-
         <!-- Hero Section -->
         <section class="hero">
-
             <div>
-
-                <p class="eyebrow">
-                    PRACTICE PROJECT
-                </p>
-
-                <h2>
-                    Cloud Infrastructure Dashboard
-                </h2>
-
+                <p class="eyebrow">PRACTICE PROJECT</p>
+                <h2>Cloud Infrastructure Dashboard</h2>
                 <p class="subtitle">
                     A sample Maven web application for practicing
                     Git, Maven and Tomcat deployments.
                 </p>
-
             </div>
-
-            <button onclick="showMessage()">
-                Check Status
-            </button>
-
+            <button onclick="showMessage()">Check Status</button>
         </section>
-
 
         <!-- Cards -->
         <section class="cards">
-
             <div class="card">
-
-                <span class="icon">
-                    ☁
-                </span>
-
-                <h3>
-                    EC2
-                </h3>
-
-                <strong>
-                    12
-                </strong>
-
-                <p>
-                    Running instances
-                </p>
-
+                <span class="icon">☁</span>
+                <h3>EC2</h3>
+                <strong>12</strong>
+                <p>Running instances</p>
             </div>
-
-
             <div class="card">
-
-                <span class="icon">
-                    ◈
-                </span>
-
-                <h3>
-                    Database
-                </h3>
-
-                <strong>
-                    04
-                </strong>
-
-                <p>
-                    Healthy databases
-                </p>
-
+                <span class="icon">◈</span>
+                <h3>Database</h3>
+                <strong>04</strong>
+                <p>Healthy databases</p>
             </div>
-
-
             <div class="card">
-
-                <span class="icon">
-                    ↗
-                </span>
-
-                <h3>
-                    Deployments
-                </h3>
-
-                <strong>
-                    28
-                </strong>
-
-                <p>
-                    Successful releases
-                </p>
-
+                <span class="icon">↗</span>
+                <h3>Deployments</h3>
+                <strong>28</strong>
+                <p>Successful releases</p>
             </div>
-
         </section>
-
 
         <!-- Activity -->
         <section class="activity">
-
             <div class="section-title">
-
-                <h3>
-                    Recent Activity
-                </h3>
-
-                <span>
-                    Today
-                </span>
-
+                <h3>Recent Activity</h3>
+                <span>Today</span>
             </div>
-
 
             <div class="activity-row">
-
                 <div class="dot"></div>
-
                 <div>
-                    <b>
-                        Application deployed
-                    </b>
-
-                    <p>
-                        accaws-practice v2.3.0
-                    </p>
+                    <b>Application deployed</b>
+                    <p>accaws-practice v2.3.0</p>
                 </div>
-
-                <time>
-                    10:45 AM
-                </time>
-
+                <time>10:45 AM</time>
             </div>
-
 
             <div class="activity-row">
-
                 <div class="dot"></div>
-
                 <div>
-                    <b>
-                        Maven build completed
-                    </b>
-
-                    <p>
-                        WAR package generated successfully
-                    </p>
+                    <b>Maven build completed</b>
+                    <p>WAR package generated successfully</p>
                 </div>
-
-                <time>
-                    10:31 AM
-                </time>
-
+                <time>10:31 AM</time>
             </div>
-
 
             <div class="activity-row">
-
                 <div class="dot"></div>
-
                 <div>
-                    <b>
-                        Tomcat application started
-                    </b>
-
-                    <p>
-                        Application available on port 8080
-                    </p>
+                    <b>Tomcat application started</b>
+                    <p>Application available on port 8080</p>
                 </div>
-
-                <time>
-                    10:20 AM
-                </time>
-
+                <time>10:20 AM</time>
             </div>
-
         </section>
-
     </main>
-
 
     <!-- Footer -->
     <footer>
-
         AccAws Practice Environment • Maven + Tomcat
-
     </footer>
 
-
-    <script src="app.js"></script>
-
+    <script>
+        function showMessage() {
+            // Simple status alert (replaces original app.js behavior in a clean way)
+            alert('✅ All systems operational.\nEC2: 12 running, Databases: 4 healthy, Deployments: 28 successful.');
+        }
+    </script>
 </body>
-
 </html>
